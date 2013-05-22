@@ -5,40 +5,41 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Caleb John</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+    <link rel="stylesheet" href="../stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="SHORTCUT ICON" href="Sprites/pie_ship.png"/>
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <script src="brython.js"></script>
   </head>
-  <body>
+  <body onLoad="brython(1)">
     <div class="wrapper">
       <header>
         <h1>Caleb John</h1>
         <p>My Wobsite</p>
         
-        <p><a href="index.html">Home</a></p>
+        <p><a href="../index.html">Home</a></p>
         
-        <p><a href="PieInvaders/pie.html">Pie Invaders</a></p>
+        <p>Pie Invaders</p>
         
         <p class="view"><a href="https://github.com/CalebJohn">Caleb John on Github</a></p>
         
       </header>
       <section>
-        <h2>Purpose</h2>
-        <p>
-          I pretty much set up this site for the purpose of accumulating
-          all my javascript (and brython) projects in one place. Just look along the side
-          and pick something that interests you if you are so inclined.
-        </p>
+        <script type="text/python" src="pie.py"></script>
+        <div>
+          <canvas id="myCanvas" width="700" height="500"></canvas>
+          <p>Use the arrow keys to move your spaceship, use the Spacebar to shoot a laser, The pies of earth are counting on you goodluck!
+        </div>
         
       </section>
       <footer>
         <p>contact: <a href="mailTo:caleb@calebjohn.ca">caleb@calebjohn.ca</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+    <script src="../javascripts/scale.fix.js"></script>
     
   </body>
 </html>
