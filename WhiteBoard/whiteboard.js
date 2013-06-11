@@ -1,12 +1,16 @@
 var canvas = document.getElementById("Canvas");
 var ctx = canvas.getContext("2d");
+canvas.addEventListener("touchstart", handleStart, false);
+canvas.addEventListener("touchend", handleEnd, false);
+canvas.addEventListener("touchleave", handleEnd, false);
+canvas.addEventListener("touchmove", handleMove, false);
 var mouse_is_down = false;
 var cursor_x;
 var cursor_y;
 var strokeStyle = "black";
+var touch
 
-function drawCircle(e)
-  {
+function drawCircle(e) {
     var x = e.screenX;
     var y = e.screenY;
     x -= canvas.offsetLeft;
@@ -15,8 +19,7 @@ function drawCircle(e)
     cursor_y = y;
   }
   
-function drawLine(e)
-  {
+function drawLine(e) {
     var x = e.screenX;
     var y = e.screenY;
     x -= canvas.offsetLeft;
@@ -29,19 +32,16 @@ function drawLine(e)
     ctx.stroke();
   }
   
-function mousedown(e)
-  {
+function mousedown(e) {
     mouse_is_down = true;
     drawCircle(e);
   }
 
-function mouseup(e)
-  {
+function mouseup(e) {
     mouse_is_down = false;
   }
   
-function mousemove(e)
-  {
+function mousemove(e) {
     if (mouse_is_down)
     {
       drawLine(e);
@@ -49,28 +49,46 @@ function mousemove(e)
     }
   }
   
-function clear()
-  {
+function handleStart(evt) {
+  evt.preventDefault();
+  var touches = evt.changedTouches;
+        
+  mousedown(touches[0])
+  }
+
+function handleMove(evt) {
+  evt.preventDefault();
+
+  var touches = evt.changedTouches;
+  
+  mousemove(touches[0])
+}
+
+function handleEnd(evt) {
+  evt.preventDefault();
+  
+  var touches = evt.changedTouches;
+        
+  mouseup(touches[0])
+}
+
+function clear() {
     canvas.width = canvas.width;
   }
   
-function black()
-  {
+function black() {
     strokeStyle = "black";
   }
   
-function red()
-  {
+function red() {
     strokeStyle = "red";
   }
   
-function green()
-  {
+function green() {
     strokeStyle = "green";
   }
   
-function blue()
-  {
+function blue() {
     strokeStyle = "blue";
   }
 
