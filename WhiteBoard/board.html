@@ -12,9 +12,8 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <script src="../javascripts/popup.js"></script>
-    <script src="brython.js"></script>
   </head>
-  <body onLoad="brython(1)">
+  <body>
     <div class="wrapper">
       <header>
         <h1>Caleb John</h1>
@@ -22,9 +21,9 @@
         
         <p><a href="../index.html">Home</a></p>
         
-        <p>Pie Invaders</p>
+        <p><a href="../PieInvaders/pie.html">Pie Invaders</a></p>
         
-        <p><a href="../WhiteBoard/board.html">WhiteBoard</a></p>
+        <p>WhiteBoard</p>
         
         <p><a href="javascript:popup()">Fun With Popups!</a></p>
         
@@ -32,11 +31,17 @@
         
       </header>
       <section>
-        <script type="text/python" src="pie.py"></script>
-        <div>
-          <canvas id="myCanvas" width="700" height="500"></canvas>
-          <p>Use the arrow keys to move your spaceship, use the Spacebar to shoot a laser, The pies of earth are counting on you goodluck!
-        </div>
+        <canvas id="Canvas" width="600" height="400" style="border:1px solid #787878;">
+        HTML5 Canvas not Supported by current browser.
+        </canvas>
+        <script src="whiteboard.js"></script>
+        <p style="text-align:center;">
+        <a href="javascript:black()"><img src="black.png"></img></a>
+        <a href="javascript:red()"><img src="red.png"></img></a>
+        <a href="javascript:green()"><img src="green.png"></img></a>
+        <a href="javascript:blue()"><img src="blue.png"></img></a>
+        <a href="javascript:clear()"><img src="clear.png"></img></a>
+        <p style="text-align:center;">A basic whiteboard using HTML5 canvas</p> 
         
       </section>
       <footer>
