@@ -8,13 +8,13 @@ var mouse_is_down = false;
 var cursor_x;
 var cursor_y;
 var strokeStyle = "black";
-var touch
+var touch;
 
 function drawCircle(e) {
     var x = e.screenX;
     var y = e.screenY;
     x -= canvas.offsetLeft;
-    y -= canvas.offsetTop * 2.5;
+    y -= canvas.offsetTop;
     cursor_x = x;
     cursor_y = y;
   }
@@ -23,7 +23,7 @@ function drawLine(e) {
     var x = e.screenX;
     var y = e.screenY;
     x -= canvas.offsetLeft;
-    y -= canvas.offsetTop * 2.5;
+    y -= canvas.offsetTop;
     ctx.beginPath();
     ctx.lineWidth = "3";
     ctx.strokeStyle = strokeStyle;
