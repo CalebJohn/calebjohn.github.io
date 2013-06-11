@@ -1,5 +1,6 @@
 var canvas = document.getElementById("Canvas");
-canvas.width = window.innerWidth * 0.44;
+var holder = document.getElementById("Holder");
+canvas.width = holder.offsetWidth
 canvas.height = window.innerHeight * 0.7;
 var ctx = canvas.getContext("2d");
 canvas.addEventListener("touchstart", handleStart, false);
@@ -107,3 +108,4 @@ function blue() {
 canvas.onmousedown = mousedown;
 canvas.onmousemove = mousemove;
 canvas.onmouseup = mouseup;
+canvas.onmouseout = mouseup;
