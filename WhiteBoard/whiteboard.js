@@ -10,20 +10,30 @@ var cursor_y;
 var strokeStyle = "black";
 var touch;
 
+function findPos(obj) { // thanks to http://wayneburkett.com/ for this function
+    var curleft = 0, curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curleft += obj.offsetLeft;
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return { x: curleft, y: curtop };
+    }
+    return undefined;
+}
+
 function drawCircle(e) {
-    var x = e.screenX;
-    var y = e.screenY;
-    x -= canvas.offsetLeft;
-    y -= canvas.offsetTop;
+    var pos = findPos(canvas)
+    var x = e.pageX - pos.x;
+    var y = e.pageY - pos.y;
     cursor_x = x;
     cursor_y = y;
   }
   
 function drawLine(e) {
-    var x = e.screenX;
-    var y = e.screenY;
-    x -= canvas.offsetLeft;
-    y -= canvas.offsetTop;
+    var pos = findPos(canvas)
+    var x = e.pageX - pos.x;
+    var y = e.pageY - pos.y;
     ctx.beginPath();
     ctx.lineWidth = "3";
     ctx.strokeStyle = strokeStyle;
