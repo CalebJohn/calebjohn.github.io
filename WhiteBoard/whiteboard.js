@@ -1,4 +1,6 @@
 var canvas = document.getElementById("Canvas");
+canvas.width = window.innerWidth * 0.44;
+canvas.height = window.innerHeight * 0.7;
 var ctx = canvas.getContext("2d");
 canvas.addEventListener("touchstart", handleStart, false);
 canvas.addEventListener("touchend", handleEnd, false);
