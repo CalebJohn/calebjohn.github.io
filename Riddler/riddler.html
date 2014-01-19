@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Caleb John</title>
+
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+    <link rel="stylesheet" href="../stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script src="../javascripts/popup.js"></script>
+    <script language="javascript">
+      var values = new Array();
+      var step = 0;
+      AddValues(3)
+      
+      function AddValues(numValues)
+      {
+        for (var i = 0; i < numValues; i ++)
+        {
+            values[i] = Math.floor(Math.random() * 10 + 1);
+        }
+      }
+      
+      function SubmitRiddle (form)
+      {
+        void(0);
+        var value = form.numBox.value;
+        PrintToPage(value);
+        
+        console.log("pressed")
+        
+        if (value == values[step])
+        {
+          step++;
+          if (step == values.length)
+          {
+            PrintToPage("You win")
+          }
+        }
+        else
+        {
+          PrintToPage("The end")
+          step = 0;
+        }
+        
+        form.numBox.value = "";
+        form.numBox.focus();
+        // hopefully keeps page in place
+        window.scrollBy(0,100);
+        
+        return false;
+      }
+      
+      function Keypress(e, form)
+      {
+        //if (e.keyCode == 13)
+        //{
+        //  SubmitRiddle(form);
+        //}
+      }
+      
+      // Creates a new paragraph and adds it to the page
+      function PrintToPage (text)
+      {
+        var p = document.createElement('p');
+        p.textContent = text;
+        document.getElementById("textDiv").appendChild(p);
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Caleb John</h1>
+        <p>My Wobsite</p>
+        
+        <p><a href="../index.html">Home</a></p>
+        
+        <p><a href="../PieInvaders/pie.html">Pie Invaders</a></p>
+        
+        <p><a href="../WhiteBoard/board.html">WhiteBoard</a></p>
+        
+        <p><a href="javascript:popup()">Fun With Popups!</a></p>
+        
+        <p class="view"><a href="https://github.com/CalebJohn">Caleb John on Github</a></p>
+        
+      </header>
+      <section>
+        <center><div id="textDiv"></div>
+        <!-- using return prevents the page refresh -->
+        <form name="riddle" id="form" onSubmit="return SubmitRiddle(this)">
+          Input a number:<br><input name="numBox"><br>
+        </form>
+      </section>
+      <footer>
+        <p>contact: <a href="mailTo:caleb@calebjohn.ca">caleb@calebjohn.ca</a></p>
+      </footer>
+    </div>
+    <script src="../javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
