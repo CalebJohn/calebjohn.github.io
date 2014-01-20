@@ -19,9 +19,11 @@
       
       function AddValues(numValues)
       {
-        for (var i = 0; i < numValues; i ++)
+        v1 = Math.floor(Math.random() * 10);
+        values[0] = v1;
+        for (var i = 1; i < numValues; i ++)
         {
-            values[i] = Math.floor(Math.random() * 10 + 1);
+            values[i] = v1 + i;
         }
       }
       
