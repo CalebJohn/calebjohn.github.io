@@ -35,8 +35,8 @@ function popup()
 {
   if (started)
   {
-    console.log(document.URL.substr(-10));
     // Must navigate to the index page first
+    // index will not show if it is the first accessed page
     if (document.URL.substr(-10) == "index.html")
     {
       window.location.replace("Riddler/riddler.html");
