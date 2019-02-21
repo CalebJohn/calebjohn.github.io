@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>eie_bmp</title>
+
+  <style>
+    label {
+      display: block;
+      font: 1rem 'Fira Sans', sans-serif;
+    }
+    
+    input, label {
+      margin: .4rem 0;
+    }
+
+    canvas {
+      width: 512px;
+      height: 256px;
+      padding: 2px 2px 2px 2px;
+      border: 1px solid black;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    div {
+      float: left;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    p {
+      margin-block-start: 0.3em;
+      margin-block-end: 0.3em;
+    }
+  </style>
+  </head>
+  <body>
+    <div>
+    <div>
+      <div style="position: relative; margin-left: 0px;">
+        <canvas id="inp_canvas" width="128" height="64"></canvas>
+        <canvas id="rect_canvas" width="512" height="256" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+      </div>
+    </div>
+    <div>
+      <canvas id="out_canvas" width="128" height="64"></canvas>
+    </div>
+    </div>
+    <div>
+      <label for="source">Choose a picture to convert</label>
+      
+      <input type="file"
+             id="source" name="Source"
+             accept="image/*"/>
+
+      <label for="source">Adjust threshold</label>
+      <input type="range" id="threshold" min="0" max="256"/>
+
+      <p id="scale_warning"></p>
+      <p id="crop_warning" style="width: 250px; visibility: hidden;">Warning: Cropping too many times can lead to unexpected results, please use an external editor to size an image if needed</p>
+
+      <button id="reset_crop" style="visibility: hidden;" onclick="drawInput()">Reset Crop</button>
+    </div>
+    <div style="float:none; margin-left: 0px;">
+      <div>
+        <textarea rows="10" cols="100" id="output_text">Output will appear here</textarea> 
+        <!-- <p id="output_text"></p> -->
+        <button id="copy" onclick="copyText()">Copy!</button>
+      </div>
+    </div>
+
+    <script>
+      var canvas = document.getElementById('inp_canvas');
+      var ctx = canvas.getContext('2d');
+      var width = canvas.width;
+      var height = canvas.height;
+      var scale = 1;
+      var sx = 0, sy = 0, sw = 0, sh = 0;
+
+      function drawInput(event, action) {
+        var img = new Image();
+        var f = document.getElementById("source").files[0];
+        var url = window.URL || window.webkitURL;
+        if (f) {
+          var src = url.createObjectURL(f);
+        } else { return; }
+
+        width = canvas.width;
+        height = canvas.height;
+        ctx.clearRect(0, 0, width, height);
+        var octx = document.getElementById('out_canvas').getContext('2d');
+        octx.clearRect(0, 0, width, height);
+
+        img.src = src;
+        var draw_image = function() {
+            var w_scale = img.width / width;
+            var h_scale = img.height / height;
+            scale = 1;
+            sx = 0; sy = 0; sw = 0; sh = 0;
+
+            if (w_scale > 1 || h_scale > 1) {
+              if (w_scale > h_scale) {
+                height = img.height /  w_scale;
+                scale = w_scale;
+              } else {
+                width = img.width / h_scale;
+                scale = h_scale;
+              }
+            } else {
+              width = img.width;
+              height = img.height;
+            }
+            document.getElementById('scale_warning').textContent = "Image scaled down " + scale + "x";
+            document.getElementById('reset_crop').style.visibility = "hidden";
+            document.getElementById('crop_warning').style.visibility = "hidden";
+
+            ctx.drawImage(img, 0, 0, width, height);
+            url.revokeObjectURL(src);
+            setThreshold();
+        }
+        var draw_cropped = function() {
+            sx = sx + cropRect[0] * scale / 4;
+            sy = sy + cropRect[1] * scale / 4;
+            sw = cropRect[2] * scale / 4;
+            sh = cropRect[3] * scale / 4;
+            var w_scale = sw / width;
+            var h_scale = sh / height;
+
+            if (w_scale > 1 || h_scale > 1) {
+              if (w_scale > h_scale) {
+                height = sh /  w_scale;
+                scale = w_scale;
+              } else {
+                width = sw / h_scale;
+                scale = h_scale;
+              }
+            } else {
+              width = sw;
+              height = sh;
+            }
+            document.getElementById('scale_warning').textContent = "Image scaled down " + scale + "x";
+            document.getElementById('reset_crop').style.visibility = "visible";
+            document.getElementById('crop_warning').style.visibility = "visible";
+
+            ctx.drawImage(img, sx, sy, sw, sh, 0, 0, width, height);
+            clear();
+            url.revokeObjectURL(src);
+            setThreshold();
+        }
+        img.onload = draw_image;
+        if (action === "crop")
+          img.onload = draw_cropped;
+
+        document.getElementById("output_text").textContent = "Processing...";
+      }
+      
+      function convert() {
+        var thresh = document.getElementById("threshold").value;
+        var data = [];
+        
+        for (var y = 0; y < height; y++) {
+          data.push([]);
+          for (var x = 0; x < width; x++) {
+            var p = ctx.getImageData(x, y, 1, 1).data;
+            if (intensity(p, 0) < thresh && p[3] !== 0) {
+              data[data.length - 1].push(0);
+            } else {
+              data[data.length - 1].push(1);
+            }
+          }
+        }
+        
+        drawOutput(data);
+        printOutput(data);
+      }
+
+      function intensity(p, i) {
+        return Math.sqrt(Math.pow(p[i], 2), Math.pow(p[i+1], 2), Math.pow(p[i+2], 2));
+      }
+
+      function setThreshold() {
+        var imgd = ctx.getImageData(0, 0, width, height);
+        var p = imgd.data;
+        var avg = 0;
+        var counter = 0;
+
+        for (var i = 0, n = p.length; i < n; i += 4) {
+            avg = avg + intensity(p, i);
+            counter = counter + 1;
+        }
+
+        var thresh = avg / counter;
+
+        var slider = document.getElementById("threshold");
+        slider.value = thresh;
+        slider.dispatchEvent(new Event('change'));
+      }
+
+      function putpixel(cont, x, y, intensity) {
+        var d = cont.createImageData(1, 1);
+        d.data[0] = intensity * 255;
+        d.data[1] = intensity * 255;
+        d.data[2] = intensity * 255;
+        d.data[3] = 255;
+        cont.putImageData(d, x, y);
+      }
+
+      function drawOutput(data) {
+        var octx = document.getElementById('out_canvas').getContext('2d');
+
+        for (var y = 0; y < height; y++) {
+          for (var x = 0; x < width; x++) {
+            putpixel(octx, x, y, data[y][x]);
+          }
+        }
+      }
+
+      function dataToBinary(data) {
+        var pixels = [];
+        for (var y = 0; y < height; y++) {
+          pixels.push([]);
+          for (var x = 0; x < width; x++) {
+            if (x % 8 == 0)
+              pixels[y].push(0)
+
+            if (data[y][x] == 0)
+              pixels[y][pixels[y].length - 1] |= 1 << (x % 8);
+          }
+        }
+        return pixels;
+      }
+      
+      function printOutput(data) {
+        var pixels = dataToBinary(data);
+
+        var f = document.getElementById("source").files[0];
+        var str = "{ /* " + f.name + " */\n"
+
+        for (var y = 0; y < pixels.length; y++) {
+          str = str + "{0x" + (pixels[y][0] & 0xFF).toString(16);
+          for (var x = 1; x < pixels[y].length; x++) {
+            str = str + ", 0x" + (pixels[y][x] & 0xFF).toString(16);
+          }
+          str = str + "},\n";
+        }
+        str = str + "},\n";
+        var output = document.getElementById("output_text");
+        output.textContent = str;
+
+        if (pixels.length < 20)
+          output.rows = pixels.length + 3;
+      }
+
+      function copyText() {
+        var out = document.getElementById("output_text");
+      
+        out.select();
+      
+        document.execCommand("copy");
+      }
+
+      document.getElementById("source").addEventListener("change", drawInput, false)
+      document.getElementById("threshold").addEventListener("change", convert, false)
+    </script><script src="draw.js"></script>
+  </body>
+</html>
